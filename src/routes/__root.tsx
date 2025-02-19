@@ -1,15 +1,35 @@
-import { createRootRouteWithContext, Link, Outlet } from '@tanstack/react-router';
+import { createRootRouteWithContext, Link, Outlet, redirect } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import { type RouterContext } from '../main';
-import { getAuthInfo } from '../lib/utils/getAuthInfo';
 import LogoutButton from '../components/logout-button';
+import axios, { isAxiosError } from 'axios';
+import { type AuthState } from '../main';
 
 const publicRoutes = ['/login', '/logout'];
 
 export const Route = createRootRouteWithContext<RouterContext>()({
-  beforeLoad: async ({ location }) => {
+  beforeLoad: async ({ location, context }) => {
     if (publicRoutes.includes(location.pathname)) return;
-    await getAuthInfo(location.href);
+    try {
+      const response = await axios<AuthState>({
+        method: 'get',
+        url: 'http://localhost:3003/auth',
+      });
+      context.setAuth(response.data);
+      return response.data;
+    } catch (error: unknown) {
+      if (isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          console.log('redirecting to login'); // in a production app i would display a toast here or something similar, for a good user experience.
+          throw redirect({ to: '/login', search: { redirect: location.href } });
+        } else {
+          console.log(error);
+          throw new Error('Could not authenticate');
+        }
+      } else {
+        throw new Error('Unknown error');
+      }
+    }
   },
   component: RouteComponent,
 });
