@@ -1,13 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 import axios, { isAxiosError } from 'axios';
 import { redirect, useLocation } from '@tanstack/react-router';
+import { type AuthState } from '../main';
 
 export function useAuth() {
   const location = useLocation();
 
   const { data, isLoading, error, isError } = useQuery({
     queryFn: async () => {
-      const response = await axios<{ is_authenticated: boolean; username?: string }>({
+      const response = await axios<AuthState>({
         method: 'get',
         url: 'http://localhost:3003/auth',
       });

@@ -11,7 +11,7 @@ import { routeTree } from './routeTree.gen';
 
 const queryClient = new QueryClient();
 
-type AuthState = {
+export type AuthState = {
   is_authenticated: boolean;
   username?: string;
 };

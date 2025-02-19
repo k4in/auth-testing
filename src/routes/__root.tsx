@@ -2,6 +2,7 @@ import { createRootRouteWithContext, Link, Outlet } from '@tanstack/react-router
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import { type RouterContext } from '../main';
 import { getAuthInfo } from '../lib/utils/getAuthInfo';
+import LogoutButton from '../components/logout-button';
 
 const publicRoutes = ['/login', '/logout'];
 
@@ -16,7 +17,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 function RouteComponent() {
   return (
     <>
-      <header className="p-2 flex gap-2 border-b">
+      <header className="p-2 flex gap-2 border-b items-center">
         <Link to="/" className="[&.active]:font-bold">
           Home
         </Link>{' '}
@@ -26,9 +27,10 @@ function RouteComponent() {
         <Link to="/about" className="[&.active]:font-bold">
           About
         </Link>
-        <Link to="/login" className="[&.active]:font-bold ml-20">
+        <Link to="/login" className="[&.active]:font-bold ml-auto">
           Login
         </Link>
+        <LogoutButton />
       </header>
       <Outlet />
       <TanStackRouterDevtools />
