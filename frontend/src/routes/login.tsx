@@ -1,15 +1,44 @@
+// import { useEffect } from 'react';
+
 import { createFileRoute, useLocation, useRouter } from '@tanstack/react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import axios, { isAxiosError } from 'axios';
 import { FormEvent, useState } from 'react';
 import { delay } from '../lib/utils/delay';
 import { useAuthStore } from '../lib/authStore';
+import { type AuthState } from '../main';
 
 type LoginSearch = {
   redirect?: string;
 };
 
 export const Route = createFileRoute('/login')({
+  beforeLoad: async ({ context, search, navigate }) => {
+    try {
+      const response = await axios<AuthState>({
+        method: 'get',
+        url: 'http://localhost:3003/auth',
+      });
+      context.setAuth(response.data);
+      if (response.data.is_authenticated) {
+        // throw redirect({ to: search.redirect || '/' });
+        //CLEAN!! This uses a deprecated functionality. But redirect does not work. What would be a possible fix
+        navigate({ to: search.redirect || '/', replace: true });
+      }
+    } catch (error: unknown) {
+      if (isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          console.log('not authenticated'); // in a production app i would display a toast here or something similar, for a good user experience.
+          context.clearAuth();
+        } else {
+          throw new Error('Could not authenticate, unknown error');
+        }
+      } else {
+        console.log(error);
+        throw new Error('Unknown error');
+      }
+    }
+  },
   validateSearch: (search: Record<string, unknown>): LoginSearch => {
     return {
       redirect: search.redirect as string,
@@ -26,14 +55,11 @@ export function Login() {
   // const isAuthenticated = useAuthStore((state) => state.auth.is_authenticated);
   const queryClient = useQueryClient();
 
-  //CLEAN!! Directly redirect if a already authenticated user opens /login. This approach doesn't work, check back later.
-  // if (isAuthenticated) {
-  //   if (!location.search.redirect) {
-  //     router.history.push('/');
-  //   } else {
-  //     router.history.push(location.search.redirect);
+  // useEffect(() => {
+  //   if (isAuthenticated) {
+  //     router.history.push(location.search.redirect || '/');
   //   }
-  // }
+  // }, []);
 
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {

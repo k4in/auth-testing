@@ -17,6 +17,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
         url: 'http://localhost:3003/auth',
       });
       context.setAuth(response.data);
+
       return response.data;
     } catch (error: unknown) {
       if (isAxiosError(error)) {
