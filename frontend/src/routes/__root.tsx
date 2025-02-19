@@ -7,11 +7,8 @@ import { useAuthStore } from '../lib/authStore';
 import { Login } from '../components/login';
 import { MainLayout } from '../components/main-layout';
 
-const publicRoutes = ['/login', '/logout'];
-
 export const Route = createRootRouteWithContext<RouterContext>()({
-  beforeLoad: async ({ location, context }) => {
-    if (publicRoutes.includes(location.pathname)) return;
+  beforeLoad: async ({ context }) => {
     try {
       const response = await axios<AuthState>({
         method: 'get',

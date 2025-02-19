@@ -1,8 +1,9 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { FormEvent, useState } from 'react';
 import { delay } from '../lib/utils/delay';
 import { useAuthStore } from '../lib/authStore';
+// import { useQueryClient } from '@tanstack/react-query';
 
 //TODO!! Login form should not be accessable when user is logged in.
 //TODO!! Login form shouldn't be part of the root layout. We'll have to render a middleware component.
@@ -11,6 +12,7 @@ import { useAuthStore } from '../lib/authStore';
 export function Login() {
   const [value, setValue] = useState<string>('perfect_user');
   const setAuth = useAuthStore((state) => state.setAuth);
+  const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {
@@ -22,7 +24,10 @@ export function Login() {
       });
       return response.data;
     },
-    onSuccess: (data) => setAuth(data),
+    onSuccess: (data) => {
+      setAuth(data);
+      queryClient.invalidateQueries();
+    },
     onError: (error) => console.log(error.message),
   });
 

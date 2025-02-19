@@ -25,6 +25,7 @@ function PendingComponent() {
 
 function RouteComponent() {
   const { data: countries } = useSuspenseQuery(queryConfig);
+
   return (
     <div className="p-2">
       {countries.sort().map((country, index) => (
