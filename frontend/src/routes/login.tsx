@@ -1,6 +1,4 @@
-// import { useEffect } from 'react';
-
-import { createFileRoute, useLocation, useRouter } from '@tanstack/react-router';
+import { createFileRoute, useLocation, useRouter, redirect } from '@tanstack/react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios, { isAxiosError } from 'axios';
 import { FormEvent, useState } from 'react';
@@ -13,7 +11,7 @@ type LoginSearch = {
 };
 
 export const Route = createFileRoute('/login')({
-  beforeLoad: async ({ context, search, navigate }) => {
+  beforeLoad: async ({ context, search }) => {
     try {
       const response = await axios<AuthState>({
         method: 'get',
@@ -21,21 +19,14 @@ export const Route = createFileRoute('/login')({
       });
       context.setAuth(response.data);
       if (response.data.is_authenticated) {
-        // throw redirect({ to: search.redirect || '/' });
-        //CLEAN!! This uses a deprecated functionality. But redirect does not work. What would be a possible fix
-        navigate({ to: search.redirect || '/', replace: true });
+        return redirect({ to: search.redirect || '/', replace: true });
       }
-    } catch (error: unknown) {
+    } catch (error) {
       if (isAxiosError(error)) {
-        if (error.response?.status === 401) {
-          console.log('not authenticated'); // in a production app i would display a toast here or something similar, for a good user experience.
-          context.clearAuth();
-        } else {
-          throw new Error('Could not authenticate, unknown error');
-        }
+        if (error.response?.status === 401) return;
       } else {
         console.log(error);
-        throw new Error('Unknown error');
+        throw new Error('Unknown authentification error');
       }
     }
   },
