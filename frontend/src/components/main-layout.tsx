@@ -8,7 +8,7 @@ export function MainLayout() {
       <header className="p-2 flex gap-2 border-b items-center">
         <Link to="/" className="[&.active]:font-bold">
           Home
-        </Link>{' '}
+        </Link>
         <Link to="/countries" className="[&.active]:font-bold">
           Countries
         </Link>
