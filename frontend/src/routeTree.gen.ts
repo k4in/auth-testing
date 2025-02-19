@@ -11,18 +11,11 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as LoginImport } from './routes/login'
 import { Route as CountriesImport } from './routes/countries'
 import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
-
-const LoginRoute = LoginImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const CountriesRoute = CountriesImport.update({
   id: '/countries',
@@ -67,13 +60,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CountriesImport
       parentRoute: typeof rootRoute
     }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginImport
-      parentRoute: typeof rootRoute
-    }
   }
 }
 
@@ -83,14 +69,12 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/countries': typeof CountriesRoute
-  '/login': typeof LoginRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/countries': typeof CountriesRoute
-  '/login': typeof LoginRoute
 }
 
 export interface FileRoutesById {
@@ -98,15 +82,14 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/countries': typeof CountriesRoute
-  '/login': typeof LoginRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/countries' | '/login'
+  fullPaths: '/' | '/about' | '/countries'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/countries' | '/login'
-  id: '__root__' | '/' | '/about' | '/countries' | '/login'
+  to: '/' | '/about' | '/countries'
+  id: '__root__' | '/' | '/about' | '/countries'
   fileRoutesById: FileRoutesById
 }
 
@@ -114,14 +97,12 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   CountriesRoute: typeof CountriesRoute
-  LoginRoute: typeof LoginRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   CountriesRoute: CountriesRoute,
-  LoginRoute: LoginRoute,
 }
 
 export const routeTree = rootRoute
@@ -136,8 +117,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/about",
-        "/countries",
-        "/login"
+        "/countries"
       ]
     },
     "/": {
@@ -148,9 +128,6 @@ export const routeTree = rootRoute
     },
     "/countries": {
       "filePath": "countries.tsx"
-    },
-    "/login": {
-      "filePath": "login.tsx"
     }
   }
 }
