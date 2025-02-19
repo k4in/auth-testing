@@ -3,10 +3,11 @@ import { redirect } from '@tanstack/react-router';
 
 export async function getAuthInfo(location: string) {
   try {
-    const response = await axios({
+    const response = await axios<{ is_authenticated: boolean; username?: string }>({
       method: 'get',
-      url: 'http://localhost:3003/auth?is_authed=no',
+      url: 'http://localhost:3003/auth',
     });
+    console.log(response);
     return response.data;
   } catch (error: unknown) {
     if (isAxiosError(error)) {

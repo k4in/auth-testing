@@ -1,12 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
-import { delay } from '../lib/utils/delay';
-import { countries } from '../mockData/countries';
+import axios from 'axios';
 
 const queryConfig = queryOptions({
   queryFn: async () => {
-    await delay(1200);
-    return countries;
+    const response = await axios<string[]>({ method: 'get', url: 'http://localhost:3003/countries' });
+
+    return response.data;
   },
   queryKey: ['contries'],
 });
@@ -27,7 +27,7 @@ function RouteComponent() {
   const { data: countries } = useSuspenseQuery(queryConfig);
   return (
     <div className="p-2">
-      {countries.map((country, index) => (
+      {countries.sort().map((country, index) => (
         <div key={`${country}-${index}`}>{country}</div>
       ))}
     </div>
