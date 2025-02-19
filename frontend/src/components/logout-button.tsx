@@ -24,7 +24,7 @@ export default function LogoutButton() {
   return (
     <button
       type="button"
-      className="cursor-pointer bg-black text-white rounded-sm px-2 py-1 hover:bg-black/80 transition-colors disabled:bg-gray-700 disabled:text-gray-300 outline-none"
+      className="ml-auto cursor-pointer bg-black text-white rounded-sm px-2 py-1 hover:bg-black/80 transition-colors disabled:bg-gray-700 disabled:text-gray-300 outline-none"
       disabled={isPending}
       onClick={() => mutate()}
     >

@@ -4,6 +4,7 @@ import { type RouterContext } from '../main';
 import LogoutButton from '../components/logout-button';
 import axios, { isAxiosError } from 'axios';
 import { type AuthState } from '../main';
+import { useAuthStore } from '../lib/authStore';
 
 const publicRoutes = ['/login', '/logout'];
 
@@ -35,6 +36,8 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 });
 
 function RouteComponent() {
+  const isAuthenticated = useAuthStore((state) => state.auth.is_authenticated);
+
   return (
     <>
       <header className="p-2 flex gap-2 border-b items-center">
@@ -47,10 +50,12 @@ function RouteComponent() {
         <Link to="/about" className="[&.active]:font-bold">
           About
         </Link>
-        <Link to="/login" className="[&.active]:font-bold ml-auto">
-          Login
-        </Link>
-        <LogoutButton />
+        {!isAuthenticated && (
+          <Link to="/login" className="[&.active]:font-bold ml-auto">
+            Login
+          </Link>
+        )}
+        {isAuthenticated && <LogoutButton />}
       </header>
       <Outlet />
       <TanStackRouterDevtools />
