@@ -1,11 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { delay } from '../lib/utils/delay';
 
 const queryConfig = queryOptions({
   queryFn: async () => {
+    await delay(988);
     const response = await axios<string[]>({ method: 'get', url: 'http://localhost:3003/countries' });
-
     return response.data;
   },
   queryKey: ['contries'],

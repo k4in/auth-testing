@@ -1,22 +1,42 @@
+import { createFileRoute, useLocation, useRouter } from '@tanstack/react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { FormEvent, useState } from 'react';
 import { delay } from '../lib/utils/delay';
 import { useAuthStore } from '../lib/authStore';
-// import { useQueryClient } from '@tanstack/react-query';
 
-//TODO!! Login form should not be accessable when user is logged in.
-//TODO!! Login form shouldn't be part of the root layout. We'll have to render a middleware component.
-//TODO!! auth state should be saved.
+type LoginSearch = {
+  redirect?: string;
+};
+
+export const Route = createFileRoute('/login')({
+  validateSearch: (search: Record<string, unknown>): LoginSearch => {
+    return {
+      redirect: search.redirect as string,
+    };
+  },
+  component: Login,
+});
 
 export function Login() {
   const [value, setValue] = useState<string>('perfect_user');
   const setAuth = useAuthStore((state) => state.setAuth);
+  const location = useLocation();
+  const router = useRouter();
+  // const isAuthenticated = useAuthStore((state) => state.auth.is_authenticated);
   const queryClient = useQueryClient();
+
+  // if (isAuthenticated) {
+  //   if (!location.search.redirect) {
+  //     router.history.push('/');
+  //   } else {
+  //     router.history.push(location.search.redirect);
+  //   }
+  // }
 
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {
-      await delay(500);
+      await delay(700);
       const response = await axios({
         method: 'post',
         url: 'http://localhost:3003/auth',
@@ -27,6 +47,11 @@ export function Login() {
     onSuccess: (data) => {
       setAuth(data);
       queryClient.invalidateQueries();
+      if (!location.search.redirect) {
+        router.history.push('/');
+      } else {
+        router.history.push(location.search.redirect);
+      }
     },
     onError: (error) => console.log(error.message),
   });

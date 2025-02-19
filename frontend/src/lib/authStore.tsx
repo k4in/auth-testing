@@ -11,8 +11,12 @@ type AuthStore = {
   clearAuth: () => void;
 };
 
+const initialState: AuthState = {
+  is_authenticated: false,
+};
+
 export const useAuthStore = create<AuthStore>((set) => ({
-  auth: { is_authenticated: false },
+  auth: initialState,
   setAuth: (auth) => set({ auth }),
-  clearAuth: () => set({ auth: { is_authenticated: false } }),
+  clearAuth: () => set({ auth: initialState }),
 }));

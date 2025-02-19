@@ -2,10 +2,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { type AuthState } from '../main';
 import { useAuthStore } from '../lib/authStore';
+import { useNavigate } from '@tanstack/react-router';
 
 export default function LogoutButton() {
   const clearAuth = useAuthStore((state) => state.clearAuth);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {
@@ -20,6 +22,7 @@ export default function LogoutButton() {
     onSuccess: () => {
       clearAuth();
       queryClient.removeQueries();
+      navigate({ to: '/login' });
     },
   });
 

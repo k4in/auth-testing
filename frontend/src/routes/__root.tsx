@@ -1,14 +1,16 @@
-import { createRootRouteWithContext } from '@tanstack/react-router';
+import { createRootRouteWithContext, redirect } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import { type RouterContext } from '../main';
 import axios, { isAxiosError } from 'axios';
 import { type AuthState } from '../main';
-import { useAuthStore } from '../lib/authStore';
-import { Login } from '../components/login';
 import { MainLayout } from '../components/main-layout';
 
+const publicRoutes = ['/login'];
+
 export const Route = createRootRouteWithContext<RouterContext>()({
-  beforeLoad: async ({ context }) => {
+  beforeLoad: async ({ context, location }) => {
+    if (publicRoutes.includes(location.pathname)) return;
+
     try {
       const response = await axios<AuthState>({
         method: 'get',
@@ -19,9 +21,12 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     } catch (error: unknown) {
       if (isAxiosError(error)) {
         if (error.response?.status === 401) {
-          console.log('error logging in'); // in a production app i would display a toast here or something similar, for a good user experience.
+          console.log('not authenticated'); // in a production app i would display a toast here or something similar, for a good user experience.
+          throw redirect({
+            to: '/login',
+            search: { redirect: location.href },
+          });
         } else {
-          console.log(error);
           throw new Error('Could not authenticate, unknown error');
         }
       } else {
@@ -33,11 +38,9 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 });
 
 function RouteComponent() {
-  const isAuthenticated = useAuthStore((state) => state.auth.is_authenticated);
-
   return (
     <>
-      {isAuthenticated ? <MainLayout /> : <Login />}
+      <MainLayout />
       <TanStackRouterDevtools />
     </>
   );
