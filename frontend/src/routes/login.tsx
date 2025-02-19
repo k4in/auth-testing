@@ -26,6 +26,7 @@ export function Login() {
   // const isAuthenticated = useAuthStore((state) => state.auth.is_authenticated);
   const queryClient = useQueryClient();
 
+  //CLEAN!! Directly redirect if a already authenticated user opens /login. This approach doesn't work, check back later.
   // if (isAuthenticated) {
   //   if (!location.search.redirect) {
   //     router.history.push('/');
@@ -47,11 +48,7 @@ export function Login() {
     onSuccess: (data) => {
       setAuth(data);
       queryClient.invalidateQueries();
-      if (!location.search.redirect) {
-        router.history.push('/');
-      } else {
-        router.history.push(location.search.redirect);
-      }
+      router.history.push(location.search.redirect || '/');
     },
     onError: (error) => console.log(error.message),
   });
@@ -62,25 +59,26 @@ export function Login() {
   }
 
   return (
-    <div className="p-2">
-      <form onSubmit={handleSubmit}>
+    <div className="p-2 h-full w-full flex justify-center mt-20">
+      <form onSubmit={handleSubmit} className="shadow bg-gray-200 rounded p-10">
         <div className="flex flex-col space-y-1">
           <label htmlFor="username">Username</label>
           <input
             type="text"
+            required
             id="username"
             value={value}
             onChange={(e) => setValue(e.target.value)}
             autoComplete="off"
             placeholder={'enter name'}
             disabled={isPending}
-            className="p-1 border border-black focus:border-emerald-500 outline-none transition-colors rounded w-[200]px disabled:bg-gray-200 disabled:text-gray-700"
+            className="p-1 border border-black focus:border-emerald-500 outline-none transition-all rounded w-[200px] disabled:bg-gray-200 disabled:text-gray-700 bg-white focus:ring-2 ring-emerald-500"
           />
         </div>
         <button
           type="submit"
           disabled={isPending}
-          className="bg-black hover:bg-black/75 transition colors shadow text-white px-4 py-2 mt-3 cursor-pointer rounded disabled:cursor-not-allowed disabled:bg-gray-700"
+          className="bg-black hover:bg-black/75 transition colors text-white px-4 py-2 mt-6 cursor-pointer rounded disabled:cursor-not-allowed disabled:bg-gray-700"
         >
           login
         </button>

@@ -19,13 +19,14 @@ export type AuthState = {
 
 export interface RouterContext {
   setAuth: (auth: AuthState) => void;
+  clearAuth: () => void;
   queryClient: QueryClient;
 }
 
 // Create a new router instance
 const router = createRouter({
   routeTree,
-  context: { queryClient, setAuth: useAuthStore.getState().setAuth },
+  context: { queryClient, setAuth: useAuthStore.getState().setAuth, clearAuth: useAuthStore.getState().clearAuth },
   defaultPreload: 'intent',
   // Since we're using React Query, we don't want loader calls to ever be stale
   // This will ensure that the loader is always called when the route is preloaded or visited

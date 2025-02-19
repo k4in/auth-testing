@@ -21,6 +21,9 @@ export function MainLayout() {
               About
             </Link>
             <LogoutButton />
+            <Link to="/login" className="[&.active]:font-bold">
+              Login
+            </Link>
           </>
         ) : (
           <Link to="/login" className="[&.active]:font-bold ml-auto">

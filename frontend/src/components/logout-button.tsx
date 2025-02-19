@@ -22,6 +22,7 @@ export default function LogoutButton() {
     onSuccess: () => {
       clearAuth();
       queryClient.removeQueries();
+      // we could add a redirect search parameter here, if necessary. pass the location.href coming from useLocation
       navigate({ to: '/login' });
     },
   });

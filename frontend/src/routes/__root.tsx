@@ -22,6 +22,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       if (isAxiosError(error)) {
         if (error.response?.status === 401) {
           console.log('not authenticated'); // in a production app i would display a toast here or something similar, for a good user experience.
+          context.clearAuth();
           throw redirect({
             to: '/login',
             search: { redirect: location.href },
